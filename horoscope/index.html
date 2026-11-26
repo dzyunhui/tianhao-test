@@ -51,13 +51,13 @@ input,select{width:100%;border:1px solid var(--line);background:#fff;border-radi
     </div>
     <div class="card">
       <label>出生日期</label>
-      <input type="date" id="dob">
+      <input type="date" id="dob" max="2026-11-26">
       <label>出生时间（可留空，准度会降）</label>
-      <input type="time" id="tob">
+      <input type="time" id="tob" value="12:00">
       <label>性别（影响上升的近似推算）</label>
       <select id="sex"><option value="f">女</option><option value="m">男</option></select>
       <div class="msg" id="msg">请先选择出生日期</div>
-      <button class="btn" onclick="go()">看看我的三个星座</button>
+      <button class="btn" id="goBtn" onclick="go()">看看我的三个星座</button>
     </div>
     <p class="warn">上升需出生地经纬度才能精确，此处按时段近似；<br>月亮按生日对应月相粗略推算，非专业星盘。</p>
   </div>
@@ -101,6 +101,7 @@ var SC={
  10:{事业:"适合需要深度和专注的领域。",情感:"要么不投入，要么全给。",家庭:"在意忠诚胜过形式。",学习:"一旦入迷，效率惊人。"},
  11:{事业:"适合探索与变化，不喜欢被框住。",情感:"需要自由，也需要被懂。",家庭:"真诚比规矩重要。",学习:"体验式学习有效，硬灌记不住。"}
 };
+document.addEventListener("DOMContentLoaded",function(){var b=document.getElementById("goBtn");if(b)b.addEventListener("click",go);var d=document.getElementById("dob");if(d)d.max="2026-11-26";});
 function show(id){["s-intro","s-result"].forEach(function(x){document.getElementById(x).classList.toggle("on",x===id)});window.scrollTo(0,0)}
 function sun(m,d){return (m===12&&d>=CUT[0]||m===1&&d<CUT[1])?0:(m===2&&d<CUT[2])?1:(m===3&&d<CUT[3])?2:(m===4&&d<CUT[4])?3:(m===5&&d<CUT[5])?4:(m===6&&d<CUT[6])?5:(m===7&&d<CUT[7])?6:(m===8&&d<CUT[8])?7:(m===9&&d<CUT[9])?8:(m===10&&d<CUT[10])?9:(m===11&&d<CUT[11])?10:11}
 function moon(m,d){
@@ -121,21 +122,33 @@ function card(i,role){
  return '<div class="card"><div class="big">'+SIGNS[i]+'</div><div class="gname">'+DATES[i]+' · '+EL[i][0]+'象</div><span class="role">'+role+'</span><p class="who">'+WHO[role==="太阳"?0:role==="上升"?1:2]+'</p><p style="margin-top:8px">'+ONE[i]+'。'+EL[i][1]+'。容易踩的坑：'+TRAP[i]+'</p></div>';
 }
 function go(){
- var v=document.getElementById("dob").value;
- if(!v){document.getElementById("msg").style.display="block";return}
- document.getElementById("msg").style.display="none";
- var p=v.split("-"),m=+p[1],d=+p[2];
- var t=document.getElementById("tob").value,sex=document.getElementById("sex").value;
- var s=sun(m,d),a=asc(t?(+t.split(":")[0]):12,sex),mo=moon(m,d);
- document.getElementById("cards").innerHTML=card(s,"太阳")+card(a,"上升")+card(mo,"月亮");
- document.getElementById("mix").textContent="别人第一眼看到的是你的"+SIGNS[a]+"；相处久了才碰到你的"+SIGNS[s]+"；而真正累的时候，你会缩回"+SIGNS[mo]+"里。这三处不一致的地方，往往就是你觉得「他们不懂我」的那一块。";
- var sh="";
- [["事业",s,"在职场里"],["情感",mo,"在亲密关系里"],["家庭",a,"在家里"],["学习",s,"在自我提升上"]].forEach(function(x){
-  sh+='<div class="sec" style="margin:14px 0"><h4>'+x[0]+'</h4><p>'+x[1].replace("在","")+" "+SC[x[2].charAt(0)==="在"?x[1]:x[1]][x[0]]+"</p></div>";
- });
- document.getElementById("scenes").innerHTML=sh;
- document.getElementById("note").innerHTML=(t?"":"你没有填出生时间，上升星座按时段粗略估算，仅供娱乐参考。")+"<br>月亮星座按生日对应月相近似推算，与真实星盘可能存在差异。";
- show("s-result");
+ try{
+  var dob=document.getElementById("dob"), msg=document.getElementById("msg");
+  var v=dob.value;
+  if(!v){ msg.textContent="请先选择你的出生日期～"; msg.style.display="block"; dob.focus(); return; }
+  if(new Date(v)>new Date("2026-11-26T23:59:59")){ msg.textContent="出生日期不能晚于今天哦。"; msg.style.display="block"; dob.focus(); return; }
+  msg.style.display="none";
+  var p=v.split("-"), m=+p[1], d=+p[2];
+  var t=document.getElementById("tob").value;
+  var h=t?(+t.split(":")[0]):12;
+  var sex=document.getElementById("sex").value;
+  var s=sun(m,d), a=asc(h,sex), mo=moon(m,d);
+  document.getElementById("cards").innerHTML=card(s,"太阳")+card(a,"上升")+card(mo,"月亮");
+  document.getElementById("mix").textContent="别人第一眼看到的是你的"+SIGNS[a]+"；相处久了才碰到你的"+SIGNS[s]+"；而真正累的时候，你会缩回"+SIGNS[mo]+"里。这三处不一致的地方，往往就是你觉得「他们不懂我」的那一块。";
+  var SH=[["事业",s,"在职场里"],["情感",mo,"在亲密关系里"],["家庭",a,"在家里"],["学习",s,"在自我提升上"]];
+  var sh="";
+  SH.forEach(function(x){
+   var txt=(SC[x[1]]&&SC[x[1]][x[0]])?SC[x[1]][x[0]]:"";
+   sh+='<div class="sec" style="margin:14px 0"><h4>'+x[0]+'</h4><p>'+x[2]+'，'+txt+'</p></div>';
+  });
+  document.getElementById("scenes").innerHTML=sh;
+  document.getElementById("note").innerHTML=(t?"":"你没有填出生时间，上升星座按时段粗略估算，仅供娱乐参考。")+"<br>月亮星座按生日对应月相近似推算，与真实星盘可能存在差异。";
+  show("s-result");
+ }catch(e){
+  var m=document.getElementById("msg");
+  m.textContent="出错了： "+e.message+" （可试试换浏览器或填一下出生时间）";
+  m.style.display="block";
+ }
 }
 </script>
 </body>
