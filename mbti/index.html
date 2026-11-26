@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MBTI 速测 · 醒着</title>
+<meta name="description" content="20 道题，快速了解你的性格偏好，附四个生活场景解读。">
+<style>
+:root{--bg:#fff;--ink:#1d1d1f;--gray:#86868b;--gray2:#aeaeb2;--card:#f5f5f7;--line:#e8e8ed;--blue:#0071e3;--red:#ff3b30}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif;font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased;padding-bottom:60px}
+.wrap{max-width:680px;margin:0 auto;padding:0 20px}
+.nav{position:sticky;top:0;z-index:9;background:rgba(255,255,255,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:680px;margin:0 auto;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.nav-t{font-weight:600}.nav-s{font-size:12px;color:var(--gray)}
+h1{font-size:34px;letter-spacing:-.022em;line-height:1.25}
+h2{font-size:24px;letter-spacing:-.02em}
+.sub{color:var(--gray)}
+.tag{display:inline-block;font-size:11px;letter-spacing:.14em;color:var(--gray);border:1px solid var(--line);border-radius:100px;padding:5px 12px}
+.dots{color:var(--gray2);font-size:11px;letter-spacing:.2em;text-align:center;margin:26px 0 10px}
+.btn{display:block;width:100%;border:0;border-radius:14px;background:var(--blue);color:#fff;font-size:17px;font-weight:600;padding:15px;margin-top:18px;cursor:pointer;font-family:inherit}
+.btn:disabled{background:#d2d2d7;cursor:not-allowed}
+.btn.ghost{background:var(--card);color:var(--ink)}
+.card{background:var(--card);border-radius:18px;padding:20px;margin:14px 0}
+.bar{height:6px;background:var(--line);border-radius:100px;overflow:hidden;margin:18px 0 6px}
+.bar>i{display:block;height:100%;background:var(--ink);border-radius:100px;transition:.25s}
+.pnum{font-size:12px;color:var(--gray);letter-spacing:.1em}
+.opts{margin-top:14px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:2px solid transparent;border-radius:14px;padding:15px 16px;margin:10px 0;font-size:16px;font-family:inherit;color:var(--ink);cursor:pointer;transition:.15s}
+.opt.on{border-color:var(--blue);background:#f0f6ff}
+.navbtns{display:flex;gap:10px;margin-top:18px}
+.navbtns .btn{margin-top:0}
+.msg{font-size:13px;color:var(--red);margin-top:10px;display:none}
+.stage{display:none}.stage.on{display:block}
+.hero{text-align:center;padding:52px 0 8px}
+.type{font-size:52px;font-weight:700;letter-spacing:.04em;text-align:center;margin:6px 0 2px}
+.oneline{text-align:center;color:var(--gray);margin-bottom:6px}
+.dim{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:14px}
+.dim b{width:34px;font-weight:600}
+.dim .track{flex:1;height:6px;background:var(--line);border-radius:100px;position:relative}
+.dim .track i{position:absolute;top:0;height:100%;border-radius:100px;background:var(--blue)}
+.dim .track i.l{left:50%;background:var(--ink)}
+.dim span{width:74px;text-align:right;color:var(--gray);font-size:12px}
+.sec{margin:22px 0}
+.sec h4{font-size:13px;color:var(--gray);letter-spacing:.1em;font-weight:600;margin-bottom:6px}
+.sec p{font-size:16px}
+ul{margin:6px 0 0 18px}li{margin:4px 0}
+.hook{background:var(--card);border-radius:18px;padding:20px;text-align:center;margin:26px 0}
+.hook a{color:var(--blue);word-break:break-all;text-decoration:none}
+.warn{font-size:12px;color:var(--gray2);text-align:center;line-height:1.7}
+.foot{margin-top:32px;padding-top:20px;border-top:1px solid var(--line);text-align:center;font-size:12px;color:var(--gray2)}
+</style>
+</head>
+<body>
+<div class="nav"><div class="nav-in"><span class="nav-t">醒着</span><span class="nav-s">MBTI 速测</span></div></div>
+<div class="wrap">
+
+  <div class="stage on" id="s-intro">
+    <div class="hero">
+      <span class="tag">醒着 · 性格测试</span>
+      <h1 style="margin-top:18px">你不是难相处<br>只是不太一样</h1>
+      <p class="sub" style="margin-top:12px">20 道题，看清你的性格偏好。<br>凭第一反应选，约 2 分钟。</p>
+      <div class="dots">— · —</div>
+    </div>
+    <div class="card">
+      <p style="font-size:15px;color:var(--gray)">没有好坏之分。它更像一面稍微擦亮一点的镜子——照到你对自己的那点模糊。</p>
+    </div>
+    <button class="btn" onclick="start()">开始测试</button>
+  </div>
+
+  <div class="stage" id="s-quiz">
+    <div class="pnum" id="pnum">01 / 20</div>
+    <div class="bar"><i id="pbar"></i></div>
+    <h2 id="qtext" style="margin-top:22px"></h2>
+    <div class="opts" id="opts"></div>
+    <div class="msg" id="msg">请选一个再继续</div>
+    <div class="navbtns">
+      <button class="btn ghost" id="prevbtn" onclick="prev()">上一题</button>
+      <button class="btn" id="nextbtn" onclick="next()">下一题</button>
+    </div>
+  </div>
+
+  <div class="stage" id="s-result">
+    <div class="dots">你的性格偏好</div>
+    <div class="type" id="r-type"></div>
+    <div class="oneline" id="r-one"></div>
+    <div class="card" id="r-dims"></div>
+    <div class="sec"><h4>大致画像</h4><p id="r-portrait"></p></div>
+    <div class="card" id="r-scenes"></div>
+    <div class="sec"><h4>容易卡住的地方</h4><p id="r-trap"></p></div>
+    <div class="hook">
+      <p style="font-size:15px">🎁 想看清「是不是太委屈自己」</p>
+      <p style="font-size:15px;margin-top:6px">回复「醒着」领讨好型人格自查表</p>
+      <p style="margin-top:10px;font-size:14px"><a href="https://dzyunhui.github.io/tianhao-test/">点此进入自查表 →</a></p>
+    </div>
+    <button class="btn ghost" onclick="start()">↻ 重新测一次</button>
+    <p class="warn" style="margin-top:18px">本测试为自我觉察工具，非正式心理测量或诊断。<br>16 型文案为固定解读，仅供参考。</p>
+    <div class="foot">醒着 · 你不是系列</div>
+  </div>
+
+</div>
+<script>
+var QS=[
+ {d:"E",t:"在人群中待了一下午，你更常觉得",o:["被抽空，想一个人待会儿","被充电，还有点意犹未尽"]},
+ {d:"E",t:"遇到烦心事，你第一反应是",o:["自己先消化，不想被人看见","找个人说说，说着说着就好些"]},
+ {d:"E",t:"周末最好的安排是",o:["清静地待着，不被打扰","约人出来，热闹一点"]},
+ {d:"E",t:"群聊里出现长篇讨论，你",o:["默默看完，很少插话","忍不住就接上了"]},
+ {d:"E",t:"陌生的社交场合，你",o:["先观察，等人来找自己","比较快就能跟人聊起来"]},
+ {d:"S",t:"别人给你讲一个计划，你更先关注",o:["步骤和细节能不能落地","这个想法本身有没有意思"]},
+ {d:"S",t:"学新东西时，你更信",o:["具体案例和操作经验","背后的原理和规律"]},
+ {d:"S",t:"描述一件事时，你",o:["习惯按时间顺序讲清楚","常跳着讲，先说感受和联想"]},
+ {d:"S",t:"做日常决定时，你更依赖",o:["以往的经验，什么用过有效","直觉，感觉对就试试"]},
+ {d:"S",t:"面对「如果」，你的态度是",o:["先看看现实条件够不够","挺爱琢磨，哪怕暂时用不上"]},
+ {d:"T",t:"朋友做了你不认同的决定，你",o:["先讲清楚哪里可能有问题","先表示理解，道理以后再说"]},
+ {d:"T",t:"被批评时，你最先想到的是",o:["他说得对不对、有没有道理","他是不是对我有意见"]},
+ {d:"T",t:"需要拒绝一个人，你",o:["直接说明理由，事归事","很难开口，怕对方难受"]},
+ {d:"T",t:"团队意见不合时，你更看重",o:["哪种方案确实更合理","别伤了和气，能接受就行"]},
+ {d:"T",t:"夸奖一个人时，你更常夸",o:["具体做成了什么、能力如何","他人多好、相处多舒服"]},
+ {d:"J",t:"出门旅行，你偏好",o:["提前把行程排得差不多","走到哪算哪，临场决定"]},
+ {d:"J",t:"一件事没定下来，你会",o:["一直惦记，定了才踏实","放着也行，到时候再说"]},
+ {d:"J",t:"对「计划被打乱」，你",o:["挺烦躁，需要重新找秩序","还好，本来也没那么死"]},
+ {d:"J",t:"交代给你的任务，你通常",o:["提前做完，不想拖","卡着时间点完成"]},
+ {d:"J",t:"面对一个长期选择，你更想",o:["尽早确定，然后往下走","多留一阵余地，不急着定"]}
+];
+var LBL={"E":"外向 E","I":"内向 I","S":"实感 S","N":"直觉 N","T":"思考 T","F":"情感 F","J":"判断 J","P":"感知 P"};
+var RES={
+ INTJ:{one:"先把世界想明白，再决定站哪儿",portrait:"你习惯在脑子里搭一套自己的体系，别人的热闹很难动摇它。你不太解释自己，因为觉得「想明白了就该明白」。不是冷，是你把温柔放在了「不打扰」里。",trap:"容易把「不被理解」当成默认设定，久了连解释都懒得做——于是真的没人懂你。",
+  s:{事业:"适合有长期构筑感的事，不喜欢被琐碎打断。",情感:"需要能接住你沉默的人，不需要热闹的陪伴。",家庭:"在意边界与默契，胜过密集相处。",学习:"靠体系吃透，讨厌零散地记。"}},
+ INTP:{one:"问题不解决，比没答案更难受",portrait:"你对「为什么」的执念大于结论本身。别人已经往前走了，你还在原地翻那只石头。你不是拖延，是不肯拿一个自己都不信的答案交差。",trap:"容易在「想清楚」这一步无限停留，把行动推迟到永远。",
+  s:{事业:"适合研究和拆解，不适合高频执行。",情感:"需要对方尊重你的思考时间，别催。",家庭:"道理讲得通就容易相处，讲不通会内耗。",学习:"兴趣驱动，一钻就深，不感兴趣很难推。"}},
+ ENTJ:{one:"既然要做事，那就把事做成",portrait:"你不害怕决断，也不太怕被人讨厌。别人还在权衡关系，你已经把资源和步骤排完了。你的温柔藏在「替大家把路铺好」里，只是很少说出口。",trap:"容易把效率和正确当成唯一标准，忽略别人的感受成本。",
+  s:{事业:"天然适合牵头和推进，需要更大的盘子。",情感:"需要愿意直接沟通、不绕圈子的人。",家庭:"习惯安排一切，要注意留出对方的自主空间。",学习:"目标导向，学会了就要用出来。"}},
+ ENTP:{one:"你说得不对——但我有个更好的",portrait:"你享受把既定说法拆开重装的过程。你不是爱抬杠，是不能忍一个漏洞。场合里的气氛常常因为你活起来，但你自己的落点往往比别人慢。",trap:"点子太多，落地太少，热度过去就换战场。",
+  s:{事业:"适合开拓和创意，不适合长期重复。",情感:"需要接得住你跳跃、又不被你压过的人。",家庭:"讲道理比讲情分更让你舒服，注意转换。",学习:"靠好奇驱动，兴趣转移很快。"}},
+ INFJ:{one:"很多人来找我，我不太找人",portrait:"你对别人的情绪有很强的接收能力，强到自己都分不清哪些是自己的。你给出的建议往往很准，但轮到自己的事，反而说不清要什么。",trap:"过度承担别人的情绪，把自己的需求排到消失。",
+  s:{事业:"适合有意义感的事，纯回报驱动会枯竭。",情感:"渴望被真正理解，而不是被安慰。",家庭:"容易成为全家情绪的容器，需要设限。",学习:"重内在逻辑，学得慢但记得深。"}},
+ INFP:{one:"我可以说很多，但真正的我你未必见过",portrait:"你心里有一套很私人的价值排序，外面那层只是外壳。你比谁都在意「对不对得起自己」，所以常常在别人看不出矛盾的地方痛苦很久。",trap:"为了不背叛内心而反复拖延决定，消耗自己。",
+  s:{事业:"需要意义与自主，被强压会迅速失去动力。",情感:"渴望被接纳真实的样子，包括不讨喜的部分。",家庭:"在意氛围是否真诚，胜过形式是否完整。",学习:"兴趣优先，有共鸣就学得飞快。"}},
+ ENFJ:{one:"我习惯先照顾别人，然后忘了自己",portrait:"你很会读气氛，也总能说出那句让人舒服的话。别人觉得你有能量，但你可能只是在持续输出自己的能量。你不是在讨好，是不忍心看别人不被接住。",trap:"把「别人的需要」当成自己的责任，累到失衡。",
+  s:{事业:"适合带人和协调，但要防止过度承担。",情感:"需要学会提要求，而不只是满足要求。",家庭:"常是维系关系的核心，别忘了自己也要被照顾。",学习:"有共鸣就有动力，也能带动别人。"}},
+ ENFP:{one:"可能性太多，我一个都不想放弃",portrait:"你对世界始终保有热情，容易让人觉得「和你在一起有意思」。但你自己常在被点燃之后迅速失去兴趣。你不是三分钟热度，是新鲜感对你来说就是燃料。",trap:"开局能力强收尾弱，容易留下半截的事。",
+  s:{事业:"适合多变的、和人打交道的事。",情感:"需要能给你空间、又拉得住你的人。",家庭:"气氛比规矩重要，但别忽略实际责任。",学习:"靠热情驱动，需要外部节奏帮自己收尾。"}},
+ ISTJ:{one:"说好的事，我一定做到",portrait:"你不爱说漂亮话，但你答应的事基本不会掉。你对「可靠」这件事有近乎洁癖的坚持，所以对不守承诺的人格外难容忍。你的温柔是「不用别人替我操心」。",trap:"对变化和例外容忍度低，容易被认为死板。",
+  s:{事业:"适合需要严谨和责任感的工作，越稳定越强。",情感:"用行动表达爱，不擅长甜言蜜语但很实在。",家庭:"承担实际事务，是家里的定盘星。",学习:"按部就班反而学得扎实。"}},
+ ISFJ:{one:"我记得所有人的事，除了自己的",portrait:"你对身边人的习惯、喜好、忌口记得清清楚楚，轮到自己却常常「随便」。你给出的照顾从不声张，也因此很少有人想过要照顾你。",trap:"长期付出却不表达需求，最后委屈成怨。",
+  s:{事业:"适合需要细致与责任的角色，但别被当作理所当然。",情感:"需要对方主动看见你，你不太会开口要。",家庭:"是家里的隐形支柱，要学会放手和求助。",学习:"耐心细致，适合扎实积累的领域。"}},
+ ESTJ:{one:"事情总得有人来定",portrait:"你不绕弯子，也不擅长猜心思——你更愿意把话说清楚、把事办明白。别人可能觉得你硬，但你处理过的局面通常都收得干净。",trap:"容易用「效率」压过别人的节奏和情绪。",
+  s:{事业:"适合组织和执行，擅长把混乱变有序。",情感:"需要直来直往的沟通，别让你猜。",家庭:"习惯承担决策，注意听取不同声音。",学习:"实用导向，学了就要能用。"}},
+ ESFJ:{one:"大家都不尴尬，我才舒服",portrait:"你对关系的温度极其敏感，总能察觉谁被落下了。你维持气氛的本事很强，代价是偶尔会说出并非真心的话——因为你受不了冷场。",trap:"为了不让别人不舒服，一直委屈自己。",
+  s:{事业:"适合服务与协调，在意被认可。",情感:"需要明确的回应和确定的关系。",家庭:"是气氛维系者，也要允许自己有不高兴的权利。",学习:"有实用性就学得进，也愿意带动旁人。"}},
+ ISTP:{one:"别问我为什么，看我怎么做",portrait:"你信手上的活和眼见的事实，不信长篇大论。遇事你反而冷静，喜欢自己拆开看看。你不爱表态，也不太想为别人的情绪负责。",trap:"不喜欢被约束，也容易把关系推远。",
+  s:{事业:"适合动手和临场处置，厌恶繁琐流程。",情感:"需要空间感，被追问会想逃。",家庭:"做得多说得少，别让沉默被误解成冷漠。",学习:"实操中学得最快，理论靠边。"}},
+ ISFP:{one:"说不上为什么，但我知道那样不对",portrait:"你对美和真实有很准的直觉，内心有一片不太对外开放的领地。你温和，但不代表好指挥——碰到底线你会安静地走开。",trap:"冲突发生时习惯回避，问题于是反复出现。",
+  s:{事业:"适合有审美和创造空间的角色，被强压会闷。",情感:"需要尊重节奏、不逼你表态的人。",家庭:"在意氛围的真实感，不爱形式主义。",学习:"体验式学习有效，硬灌记不住。"}},
+ ESTP:{one:"先做了再说，想那么多干嘛",portrait:"你在真实局面里最快清醒，越是有压力越来劲。你反应快、敢下场，也不太爱复盘。别人还在准备，你已经试过一轮了。",trap:"容易忽略长期成本和他人感受，事后才补。",
+  s:{事业:"适合临场、需要决断和行动力的岗位。",情感:"需要直接热烈、不拖泥带水的相处。",家庭:"实际事务靠得住，但耐心有限。",学习:"在真实场景里学得最快。"}},
+ ESFP:{one:"这一刻，得有意思一点",portrait:"你对当下氛围的感知非常强，能让周围的人松弛下来。你需要被看见、被回应，这不是浅薄，是你确认自己存在的方式。",trap:"回避沉重话题，长期问题容易被搁置。",
+  s:{事业:"适合与人互动、需要感染力的角色。",情感:"需要热情的回应和当下的陪伴。",家庭:"能带来欢乐，也要学着承担枯燥的部分。",学习:"有趣才学得进，需要即时反馈。"}}
+};
+var ans=new Array(QS.length).fill(null),cur=0;
+function show(id){["s-intro","s-quiz","s-result"].forEach(function(x){document.getElementById(x).classList.toggle("on",x===id)});window.scrollTo(0,0)}
+function start(){ans.fill(null);cur=0;show("s-quiz");render()}
+function render(){
+ var q=QS[cur];
+ document.getElementById("pnum").textContent=("0"+(cur+1)).slice(-2)+" / 20";
+ document.getElementById("pbar").style.width=((cur+1)/20*100)+"%";
+ document.getElementById("qtext").textContent=q.t;
+ var h="";
+ q.o.forEach(function(o,i){h+='<button class="opt'+(ans[cur]===i?" on":"")+'" onclick="pick('+i+')">'+o+"</button>"});
+ document.getElementById("opts").innerHTML=h;
+ document.getElementById("msg").style.display="none";
+ document.getElementById("prevbtn").style.display=cur===0?"none":"block";
+ document.getElementById("nextbtn").textContent=cur===19?"查看结果":"下一题";
+}
+function pick(i){ans[cur]=i;render()}
+function next(){
+ if(ans[cur]===null){document.getElementById("msg").style.display="block";return}
+ if(cur===19){result()}else{cur++;render()}
+}
+function prev(){if(cur>0){cur--;render()}}
+function result(){
+ var sc={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+ ans.forEach(function(a,i){
+  var d=QS[i].d;
+  var o={E:"I",S:"N",T:"F",J:"P"}[d];
+  if(a===1)sc[d]++; else if(o)sc[o]++;
+ });
+ var pairs=[["E","I"],["S","N"],["T","F"],["J","P"]],type="",dh="";
+ pairs.forEach(function(p){
+  var a=sc[p[0]],b=sc[p[1]],t=a+b||1;
+  type+=(a>=b?p[0]:p[1]);
+  var pct=Math.round(Math.max(a,b)/t*100);
+  dh+='<div class="dim"><b>'+p[0]+'</b><div class="track"><i class="'+(a>=b?"":"l")+'" style="width:'+pct+'%"></i></div><b>'+p[1]+'</b><span>'+LBL[a>=b?p[0]:p[1]]+' '+pct+'%</span></div>';
+ });
+ var r=RES[type]||RES.INFP;
+ document.getElementById("r-type").textContent=type;
+ document.getElementById("r-one").textContent=r.one;
+ document.getElementById("r-dims").innerHTML=dh;
+ document.getElementById("r-portrait").textContent=r.portrait;
+ document.getElementById("r-trap").textContent=r.trap;
+ var sh="";
+ [["事业",r.s.事业],["情感",r.s.情感],["家庭",r.s.家庭],["学习",r.s.学习]].forEach(function(x){
+  sh+='<div class="sec" style="margin:14px 0"><h4>'+x[0]+'</h4><p>'+x[1]+"</p></div>";
+ });
+ document.getElementById("r-scenes").innerHTML=sh;
+ show("s-result");
+}
+</script>
+</body>
+</html>
